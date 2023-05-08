@@ -1,9 +1,9 @@
 %{
 #include <stdio.h>
 #include "y.tab.c"
-int count = 1;
+#include "y.tab.h"
 int numcount = 1;
-int error = 0;
+extern int lexical_error;
 %}
 
 BINARY [01]
@@ -31,28 +31,17 @@ space [ \t]+
 {par-a}   {printf("par-a: %s\n", yytext); return PAR_A;}
 {par-c}   {printf("par-c: %s\n", yytext); return PAR_C;}
 {space}    {/* do nothing */ }
-[01]*[2-9a-zA-Z][0-9a-zA-Z]*|[01]*[0-9]*[2-9a-zA-Z][0-9a-zA-Z]* {printf("ERROR Léxico!!\n"); error=1;};
+[01]*[2-9a-zA-Z][0-9a-zA-Z]*|[01]*[0-9]*[2-9a-zA-Z][0-9a-zA-Z]* {printf("ERROR Léxico!!\n"); lexical_error=1;};
 \n {
-    printf("Análisis Sintáctico:\n");
-    if(error == 0) {
-        if(errors > 0){
-            printf("Errores Sintacticos: %d\n", errors);
-        }else {
-            printf("No se encontraron errores sintacticos\n");
-        }
-    }else {
-        printf("No se ejecuta\n");
-    }
-    printf("---Line %d---\n", count); 
-    count++;
-    numcount = 1;
+    numcount = 1;   
 }
-. printf("ERROR Léxico!!\n"); error=1;
+. printf("ERROR Léxico!!\n"); lexical_error=1;
 %%
 
 #define MAX_LINE_LENGTH 2048
 
 
+int lexical_error = 0;
 int yywrap(){}
 int main(int argc, char *argv[]) {
     if(argc == 2){
@@ -67,16 +56,29 @@ int main(int argc, char *argv[]) {
             printf("Unable to open file\n");
             return 1;
         }
-
+        
         printf("Componentes Léxicos:\n");
         printf("---Line 0---\n");
+        int count = 1;
         while (fgets(line, sizeof(line), fp)) {
             printf("%s", line);
             YY_BUFFER_STATE buffer = yy_scan_string(line); 
-            while (yylex() != 0) {
-            
+            yyparse();
+            printf("Análisis Sintáctico:\n");
+            if(lexical_error == 0) {
+                if(errors > 0){
+                    printf("Errores Sintacticos: %d\n", errors);
+                }else {
+                    printf("Correcto!\n");
+                }
+            }else {
+                printf("No se ejecuta\n");
             }
-            yyparse(); 
+            errors = 0;
+            lexical_error = 0;
+            printf("---Line %d---\n", count); 
+            count++;
+            printf("yyin: %s\n", yytext);
             yy_delete_buffer(buffer); 
         }
         // close the file

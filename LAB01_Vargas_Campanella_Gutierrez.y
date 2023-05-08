@@ -17,6 +17,8 @@ void yyerror(char* s);
 %token PAR_A
 %token PAR_C
 
+%error-verbose
+
 %%
 
 expr: NUM
@@ -36,5 +38,8 @@ expr: NUM
 int errors = 0;
 
 void yyerror(char* s) {
+    fprintf(stderr, "Syntax error: %s\n", s);
+    fprintf(stderr, "Input string that caused the error: %s\n", yytext);
     errors++;
+    yyrestart(buffer);
 }

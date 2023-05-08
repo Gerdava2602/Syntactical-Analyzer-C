@@ -460,9 +460,9 @@ char *yytext;
 #line 2 "LAB01_Vargas_Campanella_Gutierrez.lex"
 #include <stdio.h>
 #include "y.tab.c"
-int count = 1;
+#include "y.tab.h"
 int numcount = 1;
-int error = 0;
+extern int lexical_error;
 #line 467 "<stdout>"
 #line 468 "<stdout>"
 
@@ -803,39 +803,27 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 34 "LAB01_Vargas_Campanella_Gutierrez.lex"
-{printf("ERROR Léxico!!\n"); error=1;};
+{printf("ERROR Léxico!!\n"); lexical_error=1;};
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
 #line 35 "LAB01_Vargas_Campanella_Gutierrez.lex"
 {
-    printf("Análisis Sintáctico:\n");
-    if(error == 0) {
-        if(errors > 0){
-            printf("Errores Sintacticos: %d\n", errors);
-        }else {
-            printf("No se encontraron errores sintacticos\n");
-        }
-    }else {
-        printf("No se ejecuta\n");
-    }
-    printf("---Line %d---\n", count); 
-    count++;
-    numcount = 1;
+    numcount = 1;   
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 50 "LAB01_Vargas_Campanella_Gutierrez.lex"
-printf("ERROR Léxico!!\n"); error=1;
+#line 38 "LAB01_Vargas_Campanella_Gutierrez.lex"
+printf("ERROR Léxico!!\n"); lexical_error=1;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 51 "LAB01_Vargas_Campanella_Gutierrez.lex"
+#line 39 "LAB01_Vargas_Campanella_Gutierrez.lex"
 ECHO;
 	YY_BREAK
-#line 839 "<stdout>"
+#line 827 "<stdout>"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1840,12 +1828,13 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 51 "LAB01_Vargas_Campanella_Gutierrez.lex"
+#line 39 "LAB01_Vargas_Campanella_Gutierrez.lex"
 
 
 #define MAX_LINE_LENGTH 2048
 
 
+int lexical_error = 0;
 int yywrap(){}
 int main(int argc, char *argv[]) {
     if(argc == 2){
@@ -1860,16 +1849,29 @@ int main(int argc, char *argv[]) {
             printf("Unable to open file\n");
             return 1;
         }
-
+        
         printf("Componentes Léxicos:\n");
         printf("---Line 0---\n");
+        int count = 1;
         while (fgets(line, sizeof(line), fp)) {
             printf("%s", line);
             YY_BUFFER_STATE buffer = yy_scan_string(line); 
-            while (yylex() != 0) {
-            
+            yyparse();
+            printf("Análisis Sintáctico:\n");
+            if(lexical_error == 0) {
+                if(errors > 0){
+                    printf("Errores Sintacticos: %d\n", errors);
+                }else {
+                    printf("Correcto!\n");
+                }
+            }else {
+                printf("No se ejecuta\n");
             }
-            yyparse(); 
+            errors = 0;
+            lexical_error = 0;
+            printf("---Line %d---\n", count); 
+            count++;
+            printf("yyin: %s\n", yytext);
             yy_delete_buffer(buffer); 
         }
         // close the file
