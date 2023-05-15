@@ -41,5 +41,4 @@ void yyerror(char* s) {
     fprintf(stderr, "Syntax error: %s\n", s);
     fprintf(stderr, "Input string that caused the error: %s\n", yytext);
     errors++;
-    yyrestart(buffer);
 }

@@ -78,7 +78,6 @@ int main(int argc, char *argv[]) {
             lexical_error = 0;
             printf("---Line %d---\n", count); 
             count++;
-            printf("yyin: %s\n", yytext);
             yy_delete_buffer(buffer); 
         }
         // close the file
