@@ -17,6 +17,13 @@ void yyerror(char* s);
 %token PAR_A
 %token PAR_C
 
+%left SUM MENOS
+%left MULT DIV
+%right NOT
+%left AND
+%left OR
+%left XOR
+
 %error-verbose
 
 %%
@@ -38,7 +45,5 @@ expr: NUM
 int errors = 0;
 
 void yyerror(char* s) {
-    fprintf(stderr, "Syntax error: %s\n", s);
-    fprintf(stderr, "Input string that caused the error: %s\n", yytext);
     errors++;
 }

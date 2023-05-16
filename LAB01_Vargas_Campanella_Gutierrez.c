@@ -1856,7 +1856,14 @@ int main(int argc, char *argv[]) {
         while (fgets(line, sizeof(line), fp)) {
             printf("%s", line);
             YY_BUFFER_STATE buffer = yy_scan_string(line); 
-            yyparse();
+            int result;
+            do {
+                result = yyparse();
+                if (result != 0) {
+                    // Handle error and recovery logic here
+                    // Reset parser state if needed
+                }
+            } while (result != 0);
             printf("Análisis Sintáctico:\n");
             if(lexical_error == 0) {
                 if(errors > 0){
@@ -1871,7 +1878,6 @@ int main(int argc, char *argv[]) {
             lexical_error = 0;
             printf("---Line %d---\n", count); 
             count++;
-            printf("yyin: %s\n", yytext);
             yy_delete_buffer(buffer); 
         }
         // close the file
