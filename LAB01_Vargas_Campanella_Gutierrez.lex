@@ -58,9 +58,9 @@ int main(int argc, char *argv[]) {
         }
         
         printf("Componentes Léxicos:\n");
-        printf("---Line 0---\n");
         int count = 1;
         while (fgets(line, sizeof(line), fp)) {
+            printf("---Line %d---\n", count); 
             printf("%s", line);
             YY_BUFFER_STATE buffer = yy_scan_string(line); 
             int result;
@@ -83,7 +83,6 @@ int main(int argc, char *argv[]) {
             }
             errors = 0;
             lexical_error = 0;
-            printf("---Line %d---\n", count); 
             count++;
             yy_delete_buffer(buffer); 
         }
