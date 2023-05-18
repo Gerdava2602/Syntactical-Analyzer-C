@@ -16,6 +16,7 @@ void yyerror(char* s);
 %token DIV
 %token PAR_A
 %token PAR_C
+%token ERROR
 
 %left SUM MENOS
 %left MULT DIV
@@ -28,7 +29,11 @@ void yyerror(char* s);
 
 %%
 
+start: expr
+    ;
+
 expr: NUM
+    | ERROR { yyerrok; }
     | expr SUM expr
     | expr MENOS expr
     | expr MULT expr

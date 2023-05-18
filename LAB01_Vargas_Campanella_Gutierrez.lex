@@ -31,11 +31,11 @@ space [ \t]+
 {par-a}   {printf("par-a: %s\n", yytext); return PAR_A;}
 {par-c}   {printf("par-c: %s\n", yytext); return PAR_C;}
 {space}    {/* do nothing */ }
-[01]*[2-9a-zA-Z][0-9a-zA-Z]*|[01]*[0-9]*[2-9a-zA-Z][0-9a-zA-Z]* {printf("ERROR Léxico!!\n"); lexical_error=1;};
+[01]*[2-9a-zA-Z][0-9a-zA-Z]*|[01]*[0-9]*[2-9a-zA-Z][0-9a-zA-Z]* {printf("ERROR Léxico!!\n"); lexical_error=1;return ERROR;};
 \n {
-    numcount = 1;   
+    numcount = 1;
 }
-. printf("ERROR Léxico!!\n"); lexical_error=1;
+. printf("ERROR Léxico!!\n"); lexical_error=1; return ERROR;
 %%
 
 #define MAX_LINE_LENGTH 2048
@@ -64,11 +64,11 @@ int main(int argc, char *argv[]) {
             printf("%s", line);
             YY_BUFFER_STATE buffer = yy_scan_string(line); 
             int result;
+            //Syntactical analysis
             do {
                 result = yyparse();
-                if (result != 0) {
-                    // Handle error and recovery logic here
-                    // Reset parser state if needed
+                if(yytext==NULL || strcmp(yytext, "") == 0){
+                    break;
                 }
             } while (result != 0);
             printf("Análisis Sintáctico:\n");

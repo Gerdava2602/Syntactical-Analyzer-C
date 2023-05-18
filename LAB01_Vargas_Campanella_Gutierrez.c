@@ -803,20 +803,20 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 34 "LAB01_Vargas_Campanella_Gutierrez.lex"
-{printf("ERROR Léxico!!\n"); lexical_error=1;};
+{printf("ERROR Léxico!!\n"); lexical_error=1;return ERROR;};
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
 #line 35 "LAB01_Vargas_Campanella_Gutierrez.lex"
 {
-    numcount = 1;   
+    numcount = 1;
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 38 "LAB01_Vargas_Campanella_Gutierrez.lex"
-printf("ERROR Léxico!!\n"); lexical_error=1;
+printf("ERROR Léxico!!\n"); lexical_error=1; return ERROR;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
@@ -1857,11 +1857,11 @@ int main(int argc, char *argv[]) {
             printf("%s", line);
             YY_BUFFER_STATE buffer = yy_scan_string(line); 
             int result;
+            //Syntactical analysis
             do {
                 result = yyparse();
-                if (result != 0) {
-                    // Handle error and recovery logic here
-                    // Reset parser state if needed
+                if(yytext==NULL || strcmp(yytext, "") == 0){
+                    break;
                 }
             } while (result != 0);
             printf("Análisis Sintáctico:\n");
